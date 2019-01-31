@@ -1,10 +1,29 @@
 # nova-compute-fake is special. It will start multi numbers of container
 # so put all variables here rather than defaults/main.yml file
+# - name: Restart nova-compute-fake containers
+#   become: true
+#   kolla_docker:
+#     action: "recreate_or_restart_container"
+#     common_options: "{{ docker_common_options }}"
+#     name: "nova_compute_fake_{{ item }}"
+#     image: "{{ nova_compute_image_full }}"
+#     privileged: True
+#     volumes:
+#       - "{{ node_config_directory }}/nova-compute-fake-{{ item }}/:{{ container_config_directory }}/:ro"
+#       - "/etc/localtime:/etc/localtime:ro"
+#       - "/lib/modules:/lib/modules:ro"
+#       - "/run:/run:shared"
+#       - "kolla_logs:/var/log/kolla/"
+#   with_sequence: start=1 end={{ num_nova_fake_per_node }}
+#   when:
+#     - kolla_action != "config"
+#     - inventory_hostname in groups['compute']
+#     - enable_nova_fake | bool
+
 - name: Restart nova-compute-fake containers
   become: true
-  kolla_docker:
-    action: "recreate_or_restart_container"
-    common_options: "{{ docker_common_options }}"
+  docker_container:
+    state: started
     name: "nova_compute_fake_{{ item }}"
     image: "{{ nova_compute_image_full }}"
     privileged: True
@@ -13,9 +32,5 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "/lib/modules:/lib/modules:ro"
       - "/run:/run:shared"
-      - "kolla_logs:/var/log/kolla/"
+      - ":/var/log/large_scale/"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
-  when:
-    - kolla_action != "config"
-    - inventory_hostname in groups['compute']
-    - enable_nova_fake | bool
