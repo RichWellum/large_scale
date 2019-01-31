@@ -9,24 +9,5 @@
 - hosts: all
   become: true
   roles:
-  - create-users
-  - configure-nodes
-
-- hosts: masters
-  become: true
-  roles:
-  # - configure-master
-  - create-k8s-master
-  - install-weave
-
-- hosts: workers
-  become: true
-  roles:
-  - join-workers
-
-- hosts: masters
-  become: true
-  roles:
-  - wrapup
-
+  - config-nova-fake
 ...
