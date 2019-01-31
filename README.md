@@ -1,4 +1,6 @@
-# large_scale
+# large_scale - scaling large numbers of computes
+
+## Copied liberally from OpenStack Kolla project
 
 https://jiradc.int.net.nokia.com/browse/CBIS-4700
 

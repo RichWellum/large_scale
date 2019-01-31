@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: true
+  gather_facts: False
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- hosts: all
+  become: true
+  roles:
+  - config-nova-fake
+...
