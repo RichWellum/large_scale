@@ -6,4 +6,28 @@ config_owner_group: root
 container_config_directory: "/var/lib/kolla/config_files"
 nova_compute_image_full:
   "172.31.0.1:8787/cbis/centos-binary-nova-compute:rocky-latest"
+api_interface_address: 172.17.1.11
+ansible_hostname: overcloud-ovscompute-0 #Todo:
+  #host=overcloud-ovscompute-0.localdomain == host = {{ ansible_hostname }}_{{ service_name }}
+service_name: localdomain
+nova_logging_debug: False
+rpc_transport_url: #todo - quotes or not
+  "rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0"
+ceph_nova_pool_name: vms
+nova_hw_disk_discard: unmap
+rbd_secret_uuid: 7d25840b-d24f-4f92-9b2b-eb3cc24457a6
+nova_compute_virt_type: kvm
+nova_libvirt_cpu_mode: host-model
+ovs_bridge: br-int
+keystone_admin_url: http://172.31.0.24:35357/v3
+default_project_domain_name: Default
+neutron_keystone_user: neutron
+default_user_domain_name: Default
+neutron_keystone_password: 3sWm1DTgvQsGRG5LfTkTVORyz
+openstack_region_name: regionOne
+notify_transport_url:
+  rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
+placement_keystone_user: placement
+placement_keystone_password: xFTA1jjWwVsiiqSoNzeexgSre
+
 ---

@@ -123,6 +123,7 @@ heartbeat_timeout_threshold=60
 [oslo_middleware]
 [oslo_policy]
 [pci]
+
 [placement]
 auth_type=password
 auth_url=http://172.17.1.12:5000
@@ -156,11 +157,13 @@ server_listen=0.0.0.0
 novncproxy_base_url=https://[2001:470:68e0:1140::100]:13080/vnc_auto.html
 vncserver_proxyclient_address=172.17.1.11
 vncserver_listen=0.0.0.0
+
 [workarounds]
 [wsgi]
 [xenserver]
 [xvp]
 [zvm]
+
 [os_vif_linux_bridge]
 use_ipv6=False
 ()[nova@overcloud-ovscompute-0 /etc/nova]$

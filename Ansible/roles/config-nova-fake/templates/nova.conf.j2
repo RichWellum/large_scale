@@ -1,11 +1,30 @@
 # nova.conf
 [DEFAULT]
+#Begin added from CBIS
 notification_driver = messagingv2
 notification_topics = notifications,vitrage_notifications
+rootwrap_config=/etc/nova/rootwrap.conf
+vif_plugging_is_fatal=True
+vif_plugging_timeout=300
+force_raw_images=True
+reserved_host_memory_mb=4096
+resume_guests_state_on_host_boot=true
+sync_power_state_interval=0
+heal_instance_info_cache_interval=60
+dhcp_domain=
+ssl_only=False
+report_interval=10
+service_down_time=60
+cpu_allocation_ratio = 1
+ram_allocation_ratio = 0.85
+vcpu_pin_set = 2-7,9-11,14-19,21-23
+resize_confirm_window = 2
+
+#End added from CBIS
 
 debug = {{ nova_logging_debug }}
 
-log_dir = /var/log/kolla/nova
+log_dir = /var/log/nova
 
 state_path = /var/lib/nova
 
@@ -23,27 +42,10 @@ metadata_listen_port = {{ nova_metadata_port }}
 # https://bugs.launchpad.net/kolla-ansible/+bug/1701564.
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 
-allow_resize_to_same_host = true
+allow_resize_to_same_host = False
 
-{% if service_name == "nova-compute-ironic" %}
-host={{ ansible_hostname }}-ironic
-log_file = /var/log/kolla/nova/nova-compute-ironic.log
-compute_driver = ironic.IronicDriver
-ram_allocation_ratio = 1.0
-reserved_host_memory_mb = 0
-{% elif enable_nova_fake | bool %}
 host = {{ ansible_hostname }}_{{ service_name }}
-compute_driver = fake.FakeDriver
-{% elif nova_compute_virt_type == 'vmware' %}
-compute_driver = vmwareapi.VMwareVCDriver
-{% elif nova_compute_virt_type == 'xenapi' %}
-compute_driver = xenapi.XenAPIDriver
-{% if service_name == 'nova-compute' %}
-host = xenapi_facts['dom0_hostname']
-{% endif %}
-{% else %}
-compute_driver = libvirt.LibvirtDriver
-{% endif %}
+compute_driver = fake.FakeDriver #todo: note was libvirt.LibvirtDriver in CBS environment
 
 # Though my_ip is not used directly, lots of other variables use $my_ip
 my_ip = {{ api_interface_address }}
@@ -66,7 +68,8 @@ enabled_filters = RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,Com
 {% endif %}
 
 [api]
-use_forwarded_for = true
+# use_forwarded_for = true
+auth_strategy=keystone
 
 [conductor]
 workers = {{ openstack_service_workers }}
@@ -87,9 +90,15 @@ novncproxy_base_url = {{ public_protocol }}://{{ kolla_external_fqdn }}:{{ nova_
 {% elif nova_console == 'spice' %}
 [vnc]
 # We have to turn off vnc to use spice
-enabled = false
+enabled = True
+keymap=en-us
+server_listen=0.0.0.0
+novncproxy_base_url=https://[2001:470:68e0:1140::100]:13080/vnc_auto.html
+vncserver_proxyclient_address= {{ api_interface_address }}
+vncserver_listen=0.0.0.0
+
 [spice]
-enabled = true
+enabled = False
 server_listen = {{ api_interface_address }}
 server_proxyclient_address = {{ api_interface_address }}
 {% if inventory_hostname in groups['compute'] %}
@@ -124,6 +133,9 @@ project_domain_name = {{ default_project_domain_name }}
 api_endpoint = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ ironic_api_port }}/v1
 {% endif %}
 
+[os_vif_linux_bridge]
+use_ipv6=False
+
 [oslo_middleware]
 enable_proxy_headers_parsing = True
 
@@ -138,11 +150,17 @@ num_retries = {{ groups['glance-api'] | length }}
 {% if enable_cinder | bool %}
 [cinder]
 catalog_info = volumev3:cinderv3:internalURL
-os_region_name = {{ openstack_region_name }}
+# os_region_name = {{ openstack_region_name }}
 {% endif %}
 
+[compute]
+consecutive_build_service_disable_threshold=0
+
 [neutron]
-url = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ neutron_server_port }}
+# url = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ neutron_server_port }}
+# todo too complicated
+url=http://172.17.1.12:9696
+
 metadata_proxy_shared_secret = {{ metadata_secret }}
 service_metadata_proxy = true
 {% if neutron_plugin_agent == 'vmware_nsxv3' %}
@@ -155,21 +173,34 @@ user_domain_id = {{ default_user_domain_id }}
 project_name = service
 username = {{ neutron_keystone_user }}
 password = {{ neutron_keystone_password }}
+# Begin added from CIS
+default_floating_pool=nova
+extension_sync_interval=600
+timeout=30
+user_domain_name = {{ default_user_domain_name }}
+region_name = {{ openstack_region_name }}
 
 [database]
-connection = mysql+pymysql://{{ nova_database_user }}:{{ nova_database_password }}@{{ nova_database_address }}/{{ nova_database_name }}
-max_pool_size = 50
-max_overflow = 1000
+# connection = mysql+pymysql://{{ nova_database_user }}:{{ nova_database_password }}@{{ nova_database_address }}/{{ nova_database_name }}
+#todo too complicated
+connection=mysql+pymysql://nova:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
+# max_pool_size = 50
+# max_overflow = 1000
 max_retries = -1
+db_max_retries = -1
 
 [api_database]
-connection = mysql+pymysql://{{ nova_api_database_user }}:{{ nova_api_database_password }}@{{ nova_api_database_address }}/{{ nova_api_database_name }}
-max_retries = -1
+# connection = mysql+pymysql://{{ nova_api_database_user }}:{{ nova_api_database_password }}@{{ nova_api_database_address }}/{{ nova_api_database_name }}
+#todo - hard coded for now - as comlicated
+connection=mysql+pymysql://nova_api:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_api?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
+# max_retries = -1
 
 [cache]
 backend = oslo_cache.memcache_pool
 enabled = True
-memcache_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
+memcache_servers=172.17.1.10:11211
+#todo - too complicated
+# memcache_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
 
 [keystone_authtoken]
@@ -188,12 +219,22 @@ memcached_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansi
 
 {% if nova_compute_virt_type in ['kvm', 'qemu'] %}
 [libvirt]
-connection_uri = "qemu+tcp://{{ api_interface_address }}/system"
+# Begin added from CBIS
+inject_password=False
+inject_key=False
+inject_partition=-2
+live_migration_uri=qemu+ssh://nova_migration@%s:22/system?keyfile=/etc/nova/migration/identity
+enabled_perf_events=
+rx_queue_size=512
+tx_queue_size=512
+volume_use_multipath = False
+# End added fro CBIS
+# connection_uri = "qemu+tcp://{{ api_interface_address }}/system"
 {% if enable_ceph | bool and nova_backend == "rbd" %}
 images_type = rbd
 images_rbd_pool = {{ ceph_nova_pool_name }}
 images_rbd_ceph_conf = /etc/ceph/ceph.conf
-rbd_user = nova
+rbd_user = openstack
 disk_cachemodes="network=writeback"
 {% if nova_hw_disk_discard != '' %}
 hw_disk_discard = {{ nova_hw_disk_discard }}
@@ -224,6 +265,10 @@ ca_file = /etc/nova/vmware_ca
 [upgrade_levels]
 compute = auto
 
+[oslo_messaging_rabbit]
+ssl=False
+heartbeat_timeout_threshold=60
+
 [oslo_messaging_notifications]
 transport_url = {{ notify_transport_url }}
 {% if nova_enabled_notification_topics %}
@@ -242,7 +287,12 @@ policy_file = {{ nova_policy_file }}
 helper_command=sudo nova-rootwrap /etc/nova/rootwrap.conf privsep-helper --config-file /etc/nova/nova.conf
 
 [glance]
-debug = {{ nova_logging_debug }}
+# debug = {{ nova_logging_debug }}
+api_servers=http://172.17.1.12:9292
+verify_glance_signatures=False
+
+[key_manager]
+backend=castellan.key_manager.barbican_key_manager.BarbicanKeyManager
 
 [guestfs]
 debug = {{ nova_logging_debug }}
@@ -263,7 +313,8 @@ default_filters = RetryFilter,AvailabilityZoneFilter,ComputeFilter,ComputeCapabi
 
 [placement]
 auth_type = password
-auth_url = {{ admin_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_admin_port }}
+# auth_url = {{ admin_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_admin_port }}
+auth_url = http://172.17.1.12:5000
 username = {{ placement_keystone_user }}
 password = {{ placement_keystone_password }}
 user_domain_name = {{ default_user_domain_name }}
@@ -271,10 +322,15 @@ project_name = service
 project_domain_name = {{ default_project_domain_name }}
 region_name = {{ openstack_region_name }}
 os_interface = internal
+valid_interfaces=internal
+
+[placement_database]
+connection=mysql+pymysql://nova_placement:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_placement?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
 
 [notifications]
 {% if enable_ceilometer | bool or enable_searchlight | bool or enable_designate | bool or enable_neutron_infoblox_ipam_agent | bool %}
 notify_on_state_change = vm_and_task_state
+notification_format=unversioned
 {% endif %}
 
 {% if enable_osprofiler | bool %}
@@ -287,7 +343,12 @@ connection_string = {{ osprofiler_backend_connection_string }}
 
 {% if enable_barbican | bool %}
 [barbican]
-auth_endpoint = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
+barbican_endpoint = https://172.17.1.12:9311
+auth_endpoint = http://172.17.1.12:5000/v3
+certfile = /etc/nova/nova-server.pem
+keyfile = /etc/nova/nova-server.key
+cafile = /etc/pki/ca-trust/source/anchors/ca-internal.crt.pem
+# auth_endpoint = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
 {% endif %}
 
 {% if nova_compute_virt_type == "xenapi" %}
