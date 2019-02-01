@@ -1,0 +1,41 @@
+()[neutron@overcloud-ovscompute-0 /etc/neutron]$ cat neutron.conf
+[DEFAULT]
+notification_driver=messagingv2
+notification_topics=notifications,vitrage_notifications
+auth_strategy=keystone
+core_plugin=ml2
+service_plugins=router,qos,segments,trunk,metering
+dns_domain=openstacklocal
+dhcp_agent_notification=True
+allow_overlapping_ips=True
+host=overcloud-ovscompute-0.localdomain
+vlan_transparent=False
+global_physnet_mtu=1600
+dhcp_agents_per_network=3
+debug=False
+log_dir=/var/log/neutron
+transport_url=rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
+control_exchange=neutron
+[agent]
+root_helper=sudo neutron-rootwrap /etc/neutron/rootwrap.conf
+[cors]
+[database]
+[keystone_authtoken]
+[matchmaker_redis]
+[nova]
+[oslo_concurrency]
+lock_path=$state_path/lock
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+driver=messagingv2
+transport_url=rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
+[oslo_messaging_rabbit]
+ssl=False
+heartbeat_timeout_threshold=60
+[oslo_messaging_zmq]
+[oslo_middleware]
+[oslo_policy]
+[quotas]
+[ssl]
+()[neutron@overcloud-ovscompute-0 /etc/neutron]$

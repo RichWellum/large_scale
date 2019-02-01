@@ -1,0 +1,10 @@
+---
+neutron_logging_debug: False
+dhcp_agents_per_network: 3
+rpc_transport_url:
+  rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
+designate_ns_record: openstacklocal
+notify_transport_url:
+  rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
+
+---
