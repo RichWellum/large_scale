@@ -1,6 +1,6 @@
 ---
-- name: Convert Controller to CentOS
-  hosts:
+- name: Configure Many Fake Nova Computes using containers
+  hosts: # todo - which hosts
       - Control
       - "*Compute*"
       - "*Storage*"
@@ -8,5 +8,5 @@
   gather_facts: False
  
   roles:
-  - centos-conversion
+  - config-nova-fake
 ---
