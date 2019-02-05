@@ -76,12 +76,6 @@ lock_path = /var/lib/nova/tmp
 
 [glance]
 
-{% if enable_cinder | bool %}
-[cinder]
-catalog_info = volumev3:cinderv3:internalURL
-# os_region_name = {{ openstack_region_name }}
-{% endif %}
-
 [compute]
 consecutive_build_service_disable_threshold=0
 
