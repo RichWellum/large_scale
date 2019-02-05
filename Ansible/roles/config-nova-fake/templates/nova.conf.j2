@@ -46,14 +46,6 @@ compute_driver = fake.FakeDriver #todo: note was libvirt.LibvirtDriver in CBS en
 # Though my_ip is not used directly, lots of other variables use $my_ip
 my_ip = {{ api_interface_address }}
 
-{% if enable_ceilometer | bool or enable_searchlight | bool or enable_designate | bool %}
-instance_usage_audit = True
-instance_usage_audit_period = hour
-{% if enable_watcher | bool %}
-compute_monitors=nova.compute.monitors.cpu.virt_driver
-{% endif %}
-{% endif %}
-
 transport_url = {{ rpc_transport_url }}
 
 {% if enable_blazar | bool %}
@@ -322,10 +314,6 @@ valid_interfaces=internal
 connection=mysql+pymysql://nova_placement:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_placement?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
 
 [notifications]
-{% if enable_ceilometer | bool or enable_searchlight | bool or enable_designate | bool or enable_neutron_infoblox_ipam_agent | bool %}
-notify_on_state_change = vm_and_task_state
-notification_format=unversioned
-{% endif %}
 
 {% if enable_osprofiler | bool %}
 [profiler]
