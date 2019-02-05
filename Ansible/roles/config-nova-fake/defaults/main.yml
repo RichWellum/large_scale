@@ -1,6 +1,6 @@
 ---
 node_config_directory: /etc/large_scale/config
-num_nova_fake_per_node: 5 #To test - eventually 300
+num_nova_fake_per_node: 1 #To test - eventually 300
 config_owner_user: root
 config_owner_group: root
 container_config_directory: "/var/lib/kolla/config_files"
