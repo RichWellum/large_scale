@@ -30,3 +30,4 @@ notify_transport_url:
 placement_keystone_user: placement
 placement_keystone_password: xFTA1jjWwVsiiqSoNzeexgSre
 nova_backend:
+enable_nova_fake: True
