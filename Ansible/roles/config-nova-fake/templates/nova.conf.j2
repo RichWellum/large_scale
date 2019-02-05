@@ -131,9 +131,6 @@ rx_queue_size=512
 tx_queue_size=512
 volume_use_multipath = False
 # End added fro CBIS
-{% if nova_backend == "rbd" and external_ceph_cephx_enabled | bool %}
-rbd_secret_uuid = {{ rbd_secret_uuid }}
-{% endif %}
 virt_type = {{ nova_compute_virt_type }}
 {% endif %}
 {% if nova_libvirt_cpu_mode %}
