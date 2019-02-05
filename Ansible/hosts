@@ -2,7 +2,7 @@
 #controller1 ansible_host=1.1.1.1 ansible_user=stack ansible_become_pass=Mc10vin!
 
 [computes]
-compute1 ansible_host=192.168.116.106 ansible_user=stack
+compute1 ansible_host=192.168.116.106 ansible_user=cbis-admin
 #compute2 ansible_host=3.3.3.3 ansible_user=stack ansible_become_pass=Mc10vin!
 
 [storages]
