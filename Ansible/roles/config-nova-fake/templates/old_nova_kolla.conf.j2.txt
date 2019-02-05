@@ -185,7 +185,7 @@ memcached_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansi
 
 {% if nova_compute_virt_type in ['kvm', 'qemu'] %}
 [libvirt]
-connection_uri = "qemu+tcp://{{ api_interface_address }}/system"
+oconnection_uri = "qemu+tcp://{{ api_interface_address }}/system"
 virt_type = {{ nova_compute_virt_type }}
 {% endif %}
 {% if nova_libvirt_cpu_mode %}
