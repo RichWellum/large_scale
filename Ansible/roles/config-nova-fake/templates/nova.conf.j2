@@ -211,14 +211,6 @@ connection=mysql+pymysql://nova_placement:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/
 
 [notifications]
 
-{% if enable_osprofiler | bool %}
-[profiler]
-enabled = true
-trace_sqlalchemy = true
-hmac_keys = {{ osprofiler_secret }}
-connection_string = {{ osprofiler_backend_connection_string }}
-{% endif %}
-
 {% if enable_barbican | bool %}
 [barbican]
 barbican_endpoint = https://172.17.1.12:9311

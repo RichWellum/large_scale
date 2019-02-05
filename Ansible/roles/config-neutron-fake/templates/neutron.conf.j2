@@ -130,14 +130,6 @@ ipv4_ptr_zone_prefix_size = 24
 ipv6_ptr_zone_prefix_size = 116
 {% endif %}
 
-{% if enable_osprofiler | bool %}
-[profiler]
-enabled = true
-trace_sqlalchemy = true
-hmac_keys = {{ osprofiler_secret }}
-connection_string = {{ osprofiler_backend_connection_string }}
-{% endif %}
-
 {% if enable_opendaylight_qos | bool %}
 [qos]
 notification_drivers = {{ neutron_notification_drivers|map(attribute='name')|join(',') }}
