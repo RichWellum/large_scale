@@ -114,7 +114,6 @@ memcache_servers=172.17.1.10:11211
 #todo - too complicated
 
 [keystone_authtoken]
-auth_url = {{ admin_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_admin_port }}
 auth_type = password
 project_domain_id = {{ default_project_domain_id }}
 project_name = service
@@ -221,7 +220,6 @@ default_filters = RetryFilter,AvailabilityZoneFilter,ComputeFilter,ComputeCapabi
 
 [placement]
 auth_type = password
-# auth_url = {{ admin_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_admin_port }}
 auth_url = http://172.17.1.12:5000
 username = {{ placement_keystone_user }}
 password = {{ placement_keystone_password }}
