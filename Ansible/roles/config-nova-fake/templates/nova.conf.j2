@@ -211,15 +211,6 @@ connection=mysql+pymysql://nova_placement:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/
 
 [notifications]
 
-{% if enable_barbican | bool %}
-[barbican]
-barbican_endpoint = https://172.17.1.12:9311
-auth_endpoint = http://172.17.1.12:5000/v3
-certfile = /etc/nova/nova-server.pem
-keyfile = /etc/nova/nova-server.key
-cafile = /etc/pki/ca-trust/source/anchors/ca-internal.crt.pem
-{% endif %}
-
 {% if nova_compute_virt_type == "xenapi" %}
 [xenserver]
 ovs_integration_bridge = br-int
