@@ -19,13 +19,13 @@ rbd_secret_uuid: 7d25840b-d24f-4f92-9b2b-eb3cc24457a6
 nova_compute_virt_type: kvm
 nova_libvirt_cpu_mode: host-model
 ovs_bridge: br-int
-keystone_admin_url: http://172.31.0.24:35357/v3
+keystone_admin_url: "http://172.31.0.24:35357/v3"
 default_project_domain_name: Default
 neutron_keystone_user: neutron
 default_user_domain_name: Default
 neutron_keystone_password: 3sWm1DTgvQsGRG5LfTkTVORyz
 openstack_region_name: regionOne
 notify_transport_url:
-  rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
+  "rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0"
 placement_keystone_user: placement
 placement_keystone_password: xFTA1jjWwVsiiqSoNzeexgSre
