@@ -116,7 +116,6 @@ memcache_servers=172.17.1.10:11211
 [keystone_authtoken]
 auth_type = password
 project_name = service
-password = {{ nova_keystone_password }}
 
 memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
