@@ -53,44 +53,6 @@ transport_url = {{ rpc_transport_url }}
 auth_strategy=keystone
 
 [conductor]
-{% if nova_console == 'novnc' %}
-[vnc]
-{% if service_name == "nova-compute-ironic" %}
-enabled = false
-{% else %}
-novncproxy_host = {{ api_interface_address }}
-novncproxy_port = {{ nova_novncproxy_port }}
-server_listen = {{ api_interface_address }}
-server_proxyclient_address = {{ api_interface_address }}
-{% if inventory_hostname in groups['compute'] %}
-novncproxy_base_url = {{ public_protocol }}://{{ kolla_external_fqdn }}:{{ nova_novncproxy_port }}/vnc_auto.html
-{% endif %}
-{% endif %}
-{% elif nova_console == 'spice' %}
-[vnc]
-# We have to turn off vnc to use spice
-enabled = True
-keymap=en-us
-server_listen=0.0.0.0
-novncproxy_base_url=https://[2001:470:68e0:1140::100]:13080/vnc_auto.html
-vncserver_proxyclient_address= {{ api_interface_address }}
-vncserver_listen=0.0.0.0
-
-[spice]
-enabled = False
-server_listen = {{ api_interface_address }}
-server_proxyclient_address = {{ api_interface_address }}
-{% if inventory_hostname in groups['compute'] %}
-html5proxy_base_url = {{ public_protocol }}://{{ kolla_external_fqdn }}:{{ nova_spicehtml5proxy_port }}/spice_auto.html
-{% endif %}
-html5proxy_host = {{ api_interface_address }}
-html5proxy_port = {{ nova_spicehtml5proxy_port }}
-{% elif nova_console == 'none' %}
-[vnc]
-enabled = false
-[spice]
-enabled = false
-{% endif %}
 {% if enable_nova_serialconsole_proxy | bool %}
 [serial_console]
 enabled = true
