@@ -29,5 +29,3 @@ notify_transport_url:
   rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0
 placement_keystone_user: placement
 placement_keystone_password: xFTA1jjWwVsiiqSoNzeexgSre
-
----

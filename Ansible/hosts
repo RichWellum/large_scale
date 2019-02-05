@@ -1,9 +1,12 @@
-[masters]
-master ansible_host=192.168.3.226 ansible_user=stack ansible_become_pass=stack
+[controllers]
+controller1 ansible_host=1.1.1.1 ansible_user=stack ansible_become_pass=Mc10vin!
 
-[workers]
-worker1 ansible_host=192.168.3.225 ansible_user=stack ansible_become_pass=stack
-worker2 ansible_host=192.168.3.224 ansible_user=stack ansible_become_pass=stack
+[computes]
+compute1 ansible_host=2.2.2.2 ansible_user=stack ansible_become_pass=Mc10vin!
+compute2 ansible_host=3.3.3.3 ansible_user=stack ansible_become_pass=Mc10vin!
+
+[storages]
+storage ansible_host=4.4.4.4 ansible_user=stack ansible_become_pass=Mc10vin!
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

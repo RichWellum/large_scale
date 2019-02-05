@@ -1,12 +1,12 @@
 ---
 - name: Configure Many Fake Nova Computes using containers
-  hosts: # todo - which hosts
-      - Control
-      - "*Compute*"
-      - "*Storage*"
+  hosts:
+    - controllers
+    - "*controller*"
+    - "*compute*"
+    - "*storage*"
   become: True
   gather_facts: False
  
   roles:
-  - config-nova-fake
----
+    - config-nova-fake
