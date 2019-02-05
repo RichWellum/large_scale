@@ -1,7 +1,6 @@
 ---
 - name: Configure Many Fake Nova Computes using containers
   hosts:
-    - controllers
     - "*controller*"
     - "*compute*"
     - "*storage*"
