@@ -98,27 +98,20 @@ user_domain_name = {{ default_user_domain_name }}
 region_name = {{ openstack_region_name }}
 
 [database]
-# connection = mysql+pymysql://{{ nova_database_user }}:{{ nova_database_password }}@{{ nova_database_address }}/{{ nova_database_name }}
 #todo too complicated
 connection=mysql+pymysql://nova:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
-# max_pool_size = 50
-# max_overflow = 1000
 max_retries = -1
 db_max_retries = -1
 
 [api_database]
-# connection = mysql+pymysql://{{ nova_api_database_user }}:{{ nova_api_database_password }}@{{ nova_api_database_address }}/{{ nova_api_database_name }}
 #todo - hard coded for now - as comlicated
 connection=mysql+pymysql://nova_api:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_api?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
-# max_retries = -1
 
 [cache]
 backend = oslo_cache.memcache_pool
 enabled = True
 memcache_servers=172.17.1.10:11211
 #todo - too complicated
-# memcache_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
-
 
 [keystone_authtoken]
 auth_url = {{ admin_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_admin_port }}
