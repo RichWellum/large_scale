@@ -9,4 +9,4 @@ compute1 ansible_host=overcloud-ovscompute-0 ansible_user=cbis-admin ansible_bec
 #storage ansible_host=4.4.4.4 ansible_user=stack ansible_become_pass=Mc10vin!
 
 [all:vars]
-ansible_python_interpreter=/usr/bin/python3
+ansible_python_interpreter=/usr/bin/python
