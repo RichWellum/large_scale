@@ -14,8 +14,6 @@ bind_port = {{ neutron_server_port }}
 api_paste_config = /usr/share/neutron/api-paste.ini
 endpoint_type = internalURL
 
-api_workers = {{ openstack_service_workers }}
-metadata_workers = {{ openstack_service_workers }}
 rpc_workers = {{ openstack_service_rpc_workers }}
 rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 

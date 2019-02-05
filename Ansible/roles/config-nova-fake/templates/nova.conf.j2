@@ -29,8 +29,6 @@ log_dir = /var/log/nova
 state_path = /var/lib/nova
 
 osapi_compute_listen = {{ api_interface_address }}
-osapi_compute_workers = {{ openstack_service_workers }}
-metadata_workers = {{ openstack_service_workers }}
 
 metadata_listen = {{ api_interface_address }}
 metadata_listen_port = {{ nova_metadata_port }}
@@ -71,8 +69,6 @@ enabled_filters = RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,Com
 auth_strategy=keystone
 
 [conductor]
-workers = {{ openstack_service_workers }}
-
 {% if nova_console == 'novnc' %}
 [vnc]
 {% if service_name == "nova-compute-ironic" %}
