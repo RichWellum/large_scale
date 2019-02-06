@@ -9,3 +9,4 @@ notify_transport_url:
 neutron_plugin_agent: openvswitch
 # The directory to merge custom config files the kolla's config files
 node_config_config: /etc/large_scale/config
+neutron_server_port: "9696"
