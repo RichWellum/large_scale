@@ -43,7 +43,7 @@
 - name: Ensure and create log dir
   become: true
   file:
-    path: "/var/log/large_scale" #todo add variable
+    path: "/var/log/large_scale" #toqdo add variable
     state: "directory"
     recurse: yes
 
