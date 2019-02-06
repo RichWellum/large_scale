@@ -10,5 +10,6 @@ neutron_plugin_agent: openvswitch
 # The directory to merge custom config files the kolla's config files
 node_config_config: /etc/large_scale/config
 neutron_server_port: "9696"
+ansible_processor_vcpus: 32
 openstack_service_workers: "{{ [ansible_processor_vcpus, 5]|min }}"
 openstack_service_rpc_workers: "{{ [ansible_processor_vcpus, 3]|min }}"
