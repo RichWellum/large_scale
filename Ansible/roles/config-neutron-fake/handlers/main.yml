@@ -47,3 +47,11 @@
     dimensions: "{{ service.dimensions }}"
     privileged: "{{ service.privileged | default(False) }}"
   with_sequence: "start=1 end={{ num_nova_fake_per_node }}"
+  when:
+    - enable_nova_fake | bool
+    - neutron_plugin_agent == "openvswitch"
+    - inventory_hostname in groups["compute"]
+    - fake_config_json | changed
+      or fake_neutron_conf | changed
+      or fake_neutron_ml2_conf_ini | changed
+      or check_fake_neutron_openvswitch_agent | changed

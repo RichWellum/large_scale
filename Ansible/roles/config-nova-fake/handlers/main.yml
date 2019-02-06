@@ -36,3 +36,6 @@
       - "/run:/run:shared"
       - "/var/log/large_scale/:/var/log/nova"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
+  when:
+    - inventory_hostname in groups['compute']
+    - enable_nova_fake | bool
