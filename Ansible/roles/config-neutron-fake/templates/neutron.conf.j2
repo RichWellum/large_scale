@@ -22,16 +22,11 @@ rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 # in it is because we are sharing this socket in a volume which is it's own dir
 # metadata_proxy_socket = /var/lib/neutron/kolla/metadata_proxy
 
-{% if neutron_plugin_agent == "openvswitch" or neutron_plugin_agent == "opendaylight" %}
 interface_driver = openvswitch
-{% elif neutron_plugin_agent == "linuxbridge" %}
-interface_driver = linuxbridge
-{% endif %}
 
 {% if enable_nova_fake | bool %}
 ovs_integration_bridge = br-int-{{ item }}
-# host = {{ ansible_hostname }}_{{ item }}
-host = overcloud-ovscompute-0.localdomain
+host = {{ ansible_hostname }}_{{ item }}
 {% endif %}
 
 allow_overlapping_ips = true
@@ -39,29 +34,7 @@ allow_overlapping_ips = true
 core_plugin = ml2
 service_plugins = router,qos,segments,trunk,metering
 
-{% if enable_neutron_agent_ha | bool %}
-dhcp_agents_per_network = {{ dhcp_agents_per_network }}
-l3_ha = true
-max_l3_agents_per_router = {{ max_l3_agents_per_router }}
-{% endif %}
-
 transport_url = {{ rpc_transport_url }}
-
-# {% if enable_neutron_dvr | bool %}
-# router_distributed = True
-# {% endif %}
-
-{% if enable_designate | bool %}
-dns_domain = {{ designate_ns_record }}.
-external_dns_driver = designate
-{% if neutron_plugin_agent == 'vmware_nsxv' %}
-nsx_extension_drivers = vmware_nsxv_dns
-{% elif neutron_plugin_agent == 'vmware_nsxv3' %}
-nsx_extension_drivers = vmware_nsxv3_dns
-{% elif neutron_plugin_agent == 'vmware_dvs' %}
-nsx_extension_drivers = vmware_dvs_dns
-{% endif %}
-{% endif %}
 
 ipam_driver = {{ neutron_ipam_driver }}
 
@@ -84,7 +57,7 @@ root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 [database]
 #todo - don't know what this
 # connection = mysql+pymysql://{{ neutron_database_user }}:{{ neutron_database_password }}@{{ neutron_database_address }}/{{ neutron_database_name }}
-Wellmax_retries = -1
+#max_retries = -1
 
 [keystone_authtoken]
 www_authenticate_uri = {{ keystone_internal_url }}
@@ -105,37 +78,6 @@ topics = {{ neutron_enabled_notification_topics | map(attribute='name') | join('
 driver = noop
 {% endif %}
 
-{% if enable_neutron_sfc | bool %}
-[sfc]
-drivers = ovs
-
-[flowclassifier]
-drivers = ovs
-{% endif %}
-
-{% if enable_octavia | bool %}
-[octavia]
-base_url = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ octavia_api_port }}
-{% endif %}
-
-{% if enable_designate | bool %}
-[designate]
-url = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ designate_api_port }}/v2
-auth_uri = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
-auth_type = password
-project_name = service
-username = {{ designate_keystone_user }}
-password = {{ designate_keystone_password }}
-allow_reverse_dns_lookup = True
-ipv4_ptr_zone_prefix_size = 24
-ipv6_ptr_zone_prefix_size = 116
-{% endif %}
-
-{% if enable_opendaylight_qos | bool %}
-[qos]
-notification_drivers = {{ neutron_notification_drivers|map(attribute='name')|join(',') }}
-{% endif %}
-
 [placement]
 auth_type = password
 username = {{ placement_keystone_user }}
@@ -148,21 +90,3 @@ os_interface = internal
 
 [privsep]
 helper_command=sudo neutron-rootwrap /etc/neutron/rootwrap.conf privsep-helper
-
-{% if enable_neutron_infoblox_ipam_agent | bool %}
-[infoblox]
-keystone_admin_project_name = service
-keystone_admin_username = {{ neutron_keystone_user }}
-keystone_admin_password = {{ neutron_keystone_password }}
-keystone_auth_uri = {{ keystone_internal_url }}
-keystone_auth_version = v3
-cloud_data_center_id = {{ infoblox_cloud_data_center_id }}
-
-[infoblox-dc:{{ infoblox_cloud_data_center_id }}]
-grid_master_host = {{ infoblox_grid_master_host }}
-grid_master_name = {{ infoblox_grid_master_name }}
-admin_user_name = {{ infoblox_admin_user_name }}
-admin_password = {{ infoblox_admin_password }}
-wapi_version = {{ infoblox_wapi_version }}
-wapi_max_results = {{ infoblox_wapi_max_results }}
-{% endif %}
