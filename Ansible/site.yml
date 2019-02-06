@@ -9,3 +9,4 @@
  
   roles:
     - config-nova-fake
+    - config-neutron-fake

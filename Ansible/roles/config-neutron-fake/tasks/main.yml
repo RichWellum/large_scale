@@ -25,7 +25,7 @@
   become: true
   vars:
     service_name: "{{ item }}"
-  merge_configs:
+  template:
     sources:
       - "{{ role_path }}/templates/neutron.conf.j2"
       - "{{ node_custom_config }}/global.conf"
@@ -44,7 +44,7 @@
   become: true
   vars:
     service_name: "{{ item }}"
-  merge_configs:
+  template:
     sources:
       - "{{ role_path }}/templates/ml2_conf.ini.j2"
       - "{{ node_custom_config }}/neutron/ml2_conf.ini"
