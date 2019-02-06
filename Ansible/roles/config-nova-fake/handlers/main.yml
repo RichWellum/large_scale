@@ -27,6 +27,8 @@
     name: "nova_compute_fake_{{ item }}"
     image: "{{ nova_compute_image_full }}"
     privileged: True
+    env:
+      KOLLA_CONFIG_STRATEGY: "COPY_ALWAYS" #copy config from host to docker
     volumes:
       - "{{ node_config_directory }}/nova-compute-fake-{{ item }}/:{{ container_config_directory }}/:ro"
       - "/etc/localtime:/etc/localtime:ro"
