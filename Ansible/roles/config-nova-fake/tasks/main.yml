@@ -40,6 +40,13 @@
   notify:
     - Restart nova-compute-fake containers
 
+- name: Ensure and create log dir
+  become: true
+  file:
+    path: "/var/log/large_scale" #todo add variable
+    state: "directory"
+    recurse: yes
+
 # - name: Check nova-compute-fake containers
 #   become: true
 #   kolla_docker:
