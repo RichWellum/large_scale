@@ -55,9 +55,6 @@ lock_path = /var/lib/neutron/tmp
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 
 [database]
-##todo - don't know what this
-## connection = mysql+pymysql://{{ neutron_database_user }}:{{ neutron_database_password }}@{{ neutron_database_address }}/{{ neutron_database_name }}
-#max_retries = -1
 
 [keystone_authtoken]
 www_authenticate_uri = {{ keystone_internal_url }}
