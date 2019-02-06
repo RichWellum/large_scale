@@ -35,3 +35,4 @@ enable_hyperv: "no"
 enable_onos: "no"
 enable_ironic_neutron_agent: "no"
 neutron_extension_drivers: "{{ extension_drivers|selectattr('enabled', 'equalto', true)|list }}"
+extension_drivers:
