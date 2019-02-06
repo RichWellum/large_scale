@@ -67,12 +67,7 @@ memcache_security_strategy = ENCRYPT
 
 [Oslo_messaging_notifications]
 transport_url = {{ notify_transport_url }}
-{% if neutron_enabled_notification_topics %}
-driver = messagingv2
-topics = {{ neutron_enabled_notification_topics | map(attribute='name') | join(',') }}
-{% else %}
 driver = noop
-{% endif %}
 
 [placement]
 auth_type = password
