@@ -8,4 +8,4 @@ notify_transport_url:
   "rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0"
 neutron_plugin_agent: openvswitch
 # The directory to merge custom config files the kolla's config files
-node_config_directory: /etc/large_scale/config
+node_config_config: /etc/large_scale/config
