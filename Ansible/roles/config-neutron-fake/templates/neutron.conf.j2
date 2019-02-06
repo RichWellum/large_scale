@@ -82,8 +82,9 @@ lock_path = /var/lib/neutron/tmp
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 
 [database]
-connection = mysql+pymysql://{{ neutron_database_user }}:{{ neutron_database_password }}@{{ neutron_database_address }}/{{ neutron_database_name }}
-max_retries = -1
+#todo - don't know what this
+# connection = mysql+pymysql://{{ neutron_database_user }}:{{ neutron_database_password }}@{{ neutron_database_address }}/{{ neutron_database_name }}
+Wellmax_retries = -1
 
 [keystone_authtoken]
 www_authenticate_uri = {{ keystone_internal_url }}
@@ -95,7 +96,7 @@ password = {{ neutron_keystone_password }}
 
 memcache_security_strategy = ENCRYPT
 
-[oslo_messaging_notifications]
+[Oslo_messaging_notifications]
 transport_url = {{ notify_transport_url }}
 {% if neutron_enabled_notification_topics %}
 driver = messagingv2
