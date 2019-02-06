@@ -7,7 +7,7 @@
     recurse: yes
     mode: "0770"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
-  when: inventory_hostname in groups['compute']
+  # when: inventory_hostname in groups['compute']
 
 - name: Copying over config.json files for services
   become: true
@@ -18,7 +18,7 @@
   register: fake_config_json
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
   when:
-    - inventory_hostname in groups['compute']
+    # - inventory_hostname in groups['compute']
     - neutron_plugin_agent == "openvswitch"
 
 - name: Copying over neutron.conf
@@ -31,13 +31,13 @@
       - "{{ node_custom_config }}/global.conf"
       - "{{ node_custom_config }}/neutron.conf"
       - "{{ node_custom_config }}/neutron/{{ item }}.conf"
-      - "{{ node_custom_config }}/neutron/{{ inventory_hostname }}/neutron.conf"
+      # - "{{ node_custom_config }}/neutron/{{ inventory_hostname }}/neutron.conf"
     dest: "{{ node_config_directory }}/neutron-openvswitch-agent-fake-{{ item }}/neutron.conf"
     mode: "0660"
   register: fake_neutron_conf
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
   when:
-    - inventory_hostname in groups['compute']
+    # - inventory_hostname in groups['compute']
     - neutron_plugin_agent == "openvswitch"
 
 - name: Copying over ml2_conf.ini
@@ -48,13 +48,13 @@
     sources:
       - "{{ role_path }}/templates/ml2_conf.ini.j2"
       - "{{ node_custom_config }}/neutron/ml2_conf.ini"
-      - "{{ node_custom_config }}/neutron/{{ inventory_hostname }}/neutron.conf"
+      # - "{{ node_custom_config }}/neutron/{{ inventory_hostname }}/neutron.conf"
     dest: "{{ node_config_directory }}/neutron-openvswitch-agent-fake-{{ item }}/ml2_conf.ini"
     mode: "0660"
   register: fake_neutron_ml2_conf_ini
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
   when:
-    - inventory_hostname in groups['compute']
+    # - inventory_hostname in groups['compute']
     - neutron_plugin_agent == "openvswitch"
 
 - name: Checking neutron-openvswitch-agent container for nova fake node
@@ -80,5 +80,5 @@
     recurse: yes
     owner: "{{ config_owner_user }}"
     group: "{{ config_owner_group }}"
-  when: inventory_hostname in groups['compute']
+  # when: inventory_hostname in groups['compute']
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
