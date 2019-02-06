@@ -57,7 +57,6 @@ root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 [database]
 
 [keystone_authtoken]
-www_authenticate_uri = {{ keystone_internal_url }}
 auth_url = {{ keystone_admin_url }}
 auth_type = password
 project_name = service
