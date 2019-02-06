@@ -13,3 +13,4 @@ neutron_server_port: "9696"
 ansible_processor_vcpus: 32
 openstack_service_workers: "{{ [ansible_processor_vcpus, 5]|min }}"
 openstack_service_rpc_workers: "{{ [ansible_processor_vcpus, 3]|min }}"
+enable_neutron_agent_ha: "no"
