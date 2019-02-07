@@ -62,3 +62,4 @@ agent_extensions:
     enabled: "{{ enable_neutron_qos | bool }}"
   - name: "sfc"
     enabled: "{{ enable_neutron_sfc | bool }}"
+ovs_datapath: "{{ 'netdev' if enable_ovs_dpdk | bool else 'system' }}"
