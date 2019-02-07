@@ -30,6 +30,19 @@
   register: fake_neutron_conf
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
 
+- name: detect api_interface_name variable
+  vars:
+    ansible_interface_name: "ansible_{{ item.replace('-', '_') }}"
+    api_interface_address: "{{ hostvars[inventory_hostname]['nodepool']['private_ipv4'] }}"
+  set_fact:
+      api_interface_name: "{{ item }}"
+      api_interface_address: "{{ api_interface_address }}"
+  when:
+    - hostvars[inventory_hostname][ansible_interface_name]['ipv4'] is defined
+    - hostvars[inventory_hostname][ansible_interface_name]['ipv4']['address'] == api_interface_address
+  with_items: "{{ ansible_interfaces }}"
+  delegate_to: "primary"
+
 - name: Copying over ml2_conf.ini
   become: true
   template:
