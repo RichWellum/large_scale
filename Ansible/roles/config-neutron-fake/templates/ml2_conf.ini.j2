@@ -11,7 +11,7 @@ ovsdb_connection = tcp:127.0.0.1:{{ ovsdb_port }}
 {% if enable_nova_fake | bool %}
 integration_bridge = br-int-{{ item }}
 {% endif %}
-{% elif neutron_plugin_agent == "linuxbridge" %}
+
 [linux_bridge]
 physical_interface_mappings = physnet1:{{ neutron_external_interface }}
 
