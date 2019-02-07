@@ -35,6 +35,14 @@ enable_hyperv: "no"
 enable_onos: "no"
 neutron_extension_drivers: "{{ extension_drivers|selectattr('enabled', 'equalto', true)|list }}"
 extension_drivers:
+  - name: "qos"
+    enabled: "{{ enable_neutron_qos | bool or enable_opendaylight_qos | bool }}"
+  - name: "port_security"
+    enabled: true
+  - name: "dns"
+    enabled: "{{ enable_designate | bool }}"
+  - name: "sfc"
+    enabled: "{{ enable_neutron_sfc | bool }}"
 enable_opendaylight: "no"
 enable_horizon_ironic: "{{ enable_ironic | bool }}"
 enable_ironic: "no"
@@ -49,3 +57,8 @@ computes_need_external_bridge: "{{ enable_neutron_dvr | bool and neutron_compute
 enable_neutron_horizon_policy_file: "{{ enable_neutron }}"
 neutron_bridge_name: "{{ 'br-dvs' if neutron_plugin_agent == 'vmware_dvs' else 'br-ex' }}"
 neutron_agent_extensions: "{{ agent_extensions | selectattr('enabled', 'equalto', true) | list }}"
+agent_extensions:
+  - name: "qos"
+    enabled: "{{ enable_neutron_qos | bool }}"
+  - name: "sfc"
+    enabled: "{{ enable_neutron_sfc | bool }}"
