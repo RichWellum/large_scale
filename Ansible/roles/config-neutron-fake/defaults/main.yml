@@ -71,4 +71,4 @@ tunnel_interface: "{{ network_interface }}"
 # network_interface: "eth0"
     # FIXME: in multi node env, api_interface may be different on each
     # node.
-# network_interface: "{{ api_interface_name }}"
+network_interface: "{{ api_interface_name }}"
