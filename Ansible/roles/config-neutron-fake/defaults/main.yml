@@ -71,17 +71,4 @@ tunnel_interface: "{{ network_interface }}"
 # network_interface: "eth0"
     # FIXME: in multi node env, api_interface may be different on each
     # node.
-- name: detect api_interface_name variable
-  vars:
-    ansible_interface_name: "ansible_{{ item.replace('-', '_') }}"
-    api_interface_address: "{{ hostvars[inventory_hostname]['nodepool']['private_ipv4'] }}"
-  set_fact:
-      api_interface_name: "{{ item }}"
-      api_interface_address: "{{ api_interface_address }}"
-  when:
-    - hostvars[inventory_hostname][ansible_interface_name]['ipv4'] is defined
-    - hostvars[inventory_hostname][ansible_interface_name]['ipv4']['address'] == api_interface_address
-  with_items: "{{ ansible_interfaces }}"
-  delegate_to: "primary"
-
 # network_interface: "{{ api_interface_name }}"
