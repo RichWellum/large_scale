@@ -17,7 +17,6 @@ physical_interface_mappings = physnet1:{{ neutron_external_interface }}
 
 [vxlan]
 l2_population = true
-{% endif %}
 
 {% if inventory_hostname in groups["network"] or inventory_hostname in groups["compute"] %}
 local_ip = {{ tunnel_interface_address }}
