@@ -37,4 +37,9 @@ enable_ironic_neutron_agent: "no"
 neutron_extension_drivers: "{{ extension_drivers|selectattr('enabled', 'equalto', true)|list }}"
 extension_drivers:
 enable_opendaylight: "no"
-
+enable_horizon_ironic: "{{ enable_ironic | bool }}"
+enable_ironic: "no"
+enable_ironic_ipxe: "no"
+enable_ironic_neutron_agent: "{{ enable_neutron | bool and enable_ironic | bool }}"
+:enable_ironic_pxe_uefi: "no"
+:enable_iscsid: "{{ (enable_cinder | bool and enable_cinder_backend_iscsi | bool) or enable_ironic | bool }}"
