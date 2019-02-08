@@ -25,7 +25,7 @@ rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 interface_driver = openvswitch
 
 ovs_integration_bridge = br-int-{{ item }}
-host = {{ ansible_hostname }} #todo
+# host = {{ ansible_hostname }} #todo
 # host = {{ ansible_hostname }}_{{ item }}
 
 allow_overlapping_ips = true
