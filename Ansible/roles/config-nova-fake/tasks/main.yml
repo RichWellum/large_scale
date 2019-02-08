@@ -1,6 +1,7 @@
 ---
 - name: Ensuring config directories exist
   become: true
+  gather_facts: true
   file:
     path: "{{ node_config_directory }}/nova-compute-fake-{{ item }}"
     state: "directory"
