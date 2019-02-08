@@ -52,6 +52,7 @@
       - "{{ node_config_directory }}/neutron-openvswitch-agent-fake-{{ item }}/:{{ container_config_directory }}/:ro"
       - "/etc/localtime:/etc/localtime:ro"
       - "/lib/modules:/lib/modules:ro"
+      - "/var/log/large_scale/:/var/log/neutron/"
   register: check_fake_neutron_openvswitch_agent
   with_sequence: "start=1 end={{ num_nova_fake_per_node }}"
   notify:
