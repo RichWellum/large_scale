@@ -41,6 +41,7 @@ firewall_driver = nova.virt.firewall.NoopFirewallDriver
 allow_resize_to_same_host = False
 
 host = {{ ansible_hostname }}-{{ service_name }}
+
 compute_driver = fake.FakeDriver #todo: note was libvirt.LibvirtDriver in CBS environment
 
 # Though my_ip is not used directly, lots of other variables use $my_ip

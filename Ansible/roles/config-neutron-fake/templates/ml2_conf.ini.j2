@@ -2,6 +2,8 @@
 
 [ovs]
 ovsdb_connection = tcp:127.0.0.1:6640
-{% if enable_nova_fake | bool %}
-integration_bridge = br-int-{{ item }}
+
+{% if enable_nova_fake | bool and ansible_hostname in groups['compute']%}
+integration_bridge = br-int-{{ service_name }}
+of_listen_port = {{ 6633 + service_name | int }}
 {% endif %}
