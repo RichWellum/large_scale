@@ -7,6 +7,8 @@
     name: "neutron_openvswitch_agent_fake_{{ item }}"
     image: "{{ neutron_openvswitch_agent_image }}"
     privileged: True
+    env:
+      KOLLA_CONFIG_STRATEGY: "COPY_ALWAYS" #copy config from host to docker
     volumes:
       - "{{ node_config_directory }}/neutron-openvswitch-agent-fake-{{ item }}/:{{ container_config_directory }}/:ro"
       - "/etc/localtime:/etc/localtime:ro"
