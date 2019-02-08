@@ -1,16 +1,7 @@
 # ml2_conf.ini
 
 [ovs]
-bridge_mappings = {% for bridge in neutron_bridge_name.split(',') %}physnet{{ loop.index0 + 1 }}:{{ bridge }}{% if not loop.last %},{% endif %}{% endfor %}
-
-{# NOTE: newline above is required for correct config generation. Do not remove. #}
-datapath_type = {{ ovs_datapath }}
-ovsdb_connection = tcp:127.0.0.1:{{ ovsdb_port }}
+ovsdb_connection = tcp:127.0.0.1:6640
 {% if enable_nova_fake | bool %}
 integration_bridge = br-int-{{ item }}
 {% endif %}
-
-[linux_bridge]
-physical_interface_mappings = physnet1:{{ neutron_external_interface }}
-
-local_ip = {{ tunnel_interface_address }}
