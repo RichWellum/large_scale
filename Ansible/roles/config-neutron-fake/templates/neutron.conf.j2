@@ -23,12 +23,9 @@ rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 # metadata_proxy_socket = /var/lib/neutron/kolla/metadata_proxy
 
 interface_driver = openvswitch
-enable_nova_fake = True
 # {% if enable_nova_fake | bool and ansible_hostname in groups['compute'] %}
-{% ansible_hostname in groups['compute'] %}
 ovs_integration_bridge = br-int-{{ service_name }}
 host = {{ ansible_hostname }}-{{ service_name }}
-{% endif %}
 
 core_plugin = ml2
 service_plugins = router,qos,segments,trunk,metering
