@@ -24,7 +24,8 @@ rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 
 interface_driver = openvswitch
 enable_nova_fake = True
-{% if enable_nova_fake | bool and ansible_hostname in groups['compute'] %}
+# {% if enable_nova_fake | bool and ansible_hostname in groups['compute'] %}
+{% ansible_hostname in groups['compute'] %}
 ovs_integration_bridge = br-int-{{ service_name }}
 host = {{ ansible_hostname }}-{{ service_name }}
 {% endif %}
