@@ -1,7 +1,6 @@
 ---
 - name: Ensuring config directories exist
   become: true
-  gather_facts: true
   file:
     path: "{{ node_config_directory }}/nova-compute-fake-{{ item }}"
     state: "directory"
@@ -43,6 +42,7 @@
 
 - name: Ensure and create log dir
   become: true
+  gather_facts: true
   file:
     path: "/var/log/large_scale" #toqdo add variable
     state: "directory"
