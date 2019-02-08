@@ -1,5 +1,5 @@
 ---
-node_config_directory: /etc/large_scale/config
+node_config_directory: "/etc/large_scale/config"
 num_nova_fake_per_node: 1 #To test - eventually 300
 config_owner_user: root
 config_owner_group: root

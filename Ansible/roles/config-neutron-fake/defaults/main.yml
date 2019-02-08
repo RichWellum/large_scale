@@ -72,3 +72,7 @@ tunnel_interface: "{{ network_interface }}"
     # FIXME: in multi node env, api_interface may be different on each
     # node.
 network_interface: "{{ api_interface_name }}"
+neutron_openvswitch_agent_image:
+  "172.31.0.1:8787/cbis/centos-binary-neutron-openvswitch-agent:rocky-latest"
+node_config_directory: "/etc/large_scale/config"
+container_config_directory: "/var/lib/kolla/config_files"
