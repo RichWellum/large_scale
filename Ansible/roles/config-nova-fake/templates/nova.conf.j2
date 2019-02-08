@@ -210,11 +210,3 @@ valid_interfaces=internal
 connection=mysql+pymysql://nova_placement:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_placement?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
 
 [notifications]
-
-{% if nova_compute_virt_type == "xenapi" %}
-[xenserver]
-ovs_integration_bridge = br-int
-connection_password = {{ xenserver_password }}
-connection_username = {{ xenserver_username }}
-connection_url = {{ xenserver_connect_protocol }}://{{ xenserver_himn_ip }}
-{% endif %}

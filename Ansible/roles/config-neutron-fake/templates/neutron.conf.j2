@@ -24,10 +24,8 @@ rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 
 interface_driver = openvswitch
 
-{% if enable_nova_fake | bool %}
 ovs_integration_bridge = br-int-{{ item }}
 host = {{ ansible_hostname }}_{{ item }}
-{% endif %}
 
 allow_overlapping_ips = true
 
@@ -51,7 +49,7 @@ endpoint_type = internal
 [oslo_concurrency]
 lock_path = /var/lib/neutron/tmp
 
-[agent]
+[Agent]
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 
 [database]
