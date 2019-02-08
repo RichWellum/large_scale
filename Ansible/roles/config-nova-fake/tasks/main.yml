@@ -42,7 +42,6 @@
 
 - name: Ensure and create log dir
   become: true
-  gather_facts: true
   file:
     path: "/var/log/large_scale" #toqdo add variable
     state: "directory"

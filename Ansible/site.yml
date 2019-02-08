@@ -5,7 +5,7 @@
     - "*compute*"
     - "*storage*"
   become: True
-  gather_facts: False
+  gather_facts: True
  
   roles:
     - config-nova-fake
