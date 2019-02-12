@@ -1,0 +1,78 @@
+# neutron.conf
+[DEFAULT]
+debug = {{ neutron_logging_debug }}
+
+log_dir = /var/log/neutron/ovs-agent-fake-{{ item }}
+
+# NOTE(elemoine): set use_stderr to False or the logs will also be sent to
+# stderr and collected by Docker
+# use_stderr = False
+
+bind_host = {{ api_interface_address }}
+bind_port = {{ neutron_server_port }}
+
+api_paste_config = /usr/share/neutron/api-paste.ini
+endpoint_type = internalURL
+
+rpc_workers = {{ openstack_service_rpc_workers }}
+rpc_state_report_workers = {{ openstack_service_rpc_workers }}
+
+# NOTE(SamYaple): We must specify this value here rather than the metadata conf
+# because it is used by the l3 and dhcp agents. The reason the path has 'kolla'
+# in it is because we are sharing this socket in a volume which is it's own dir
+# metadata_proxy_socket = /var/lib/neutron/kolla/metadata_proxy
+
+interface_driver = openvswitch
+ovs_integration_bridge = br-int-{{ item }}
+host = {{ ansible_hostname }}-{{ item }}
+
+core_plugin = ml2
+service_plugins = router,qos,segments,trunk,metering
+
+transport_url = {{ rpc_transport_url }}
+
+ipam_driver = {{ neutron_ipam_driver }}
+
+[nova]
+auth_url = {{ keystone_admin_url }}
+auth_type = password
+region_name = {{ openstack_region_name }}
+project_name = service
+endpoint_type = internal
+
+[oslo_middleware]
+# enable_proxy_headers_parsing = True
+
+[oslo_concurrency]
+lock_path = /var/lib/neutron/tmp
+
+[Agent]
+root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
+
+[database]
+
+[keystone_authtoken]
+auth_url = {{ keystone_admin_url }}
+auth_type = password
+project_name = service
+username = {{ neutron_keystone_user }}
+password = {{ neutron_keystone_password }}
+
+memcache_security_strategy = ENCRYPT
+
+[Oslo_messaging_notifications]
+transport_url = {{ notify_transport_url }}
+driver = noop
+
+[placement]
+auth_type = password
+username = {{ placement_keystone_user }}
+password = {{ placement_keystone_password }}
+user_domain_name = {{ default_user_domain_name }}
+project_name = service
+project_domain_name = {{ default_project_domain_name }}
+os_region_name = {{ openstack_region_name }}
+os_interface = internal
+
+[privsep]
+helper_command=sudo neutron-rootwrap /etc/neutron/rootwrap.conf privsep-helper

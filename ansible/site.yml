@@ -1,0 +1,14 @@
+---
+- name: Configure Many Fake Nova Computes using containers
+  hosts:
+    - "*controller*"
+    - "*compute*"
+    - "*storage*"
+  become: True
+  gather_facts: True
+  vars:
+    num_nova_fake_per_node: 300
+ 
+  roles:
+    - config-nova-fake
+    - config-neutron-fake

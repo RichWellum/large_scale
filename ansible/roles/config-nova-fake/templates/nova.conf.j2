@@ -1,0 +1,213 @@
+# nova.conf
+[DEFAULT]
+#Begin added from CBIS
+notification_driver = messagingv2
+notification_topics = notifications,vitrage_notifications
+rootwrap_config=/etc/nova/rootwrap.conf
+vif_plugging_is_fatal=True
+vif_plugging_timeout=300
+force_raw_images=True
+reserved_host_memory_mb=4096
+resume_guests_state_on_host_boot=true
+sync_power_state_interval=0
+heal_instance_info_cache_interval=60
+dhcp_domain=
+ssl_only=False
+report_interval=10
+service_down_time=60
+cpu_allocation_ratio = 1
+ram_allocation_ratio = 0.85
+vcpu_pin_set = 2-7,9-11,14-19,21-23
+resize_confirm_window = 2
+
+#End added from CBIS
+
+debug = {{ nova_logging_debug }}
+
+log_dir = /var/log/nova/compute-fake-{{ item }}
+
+state_path = /var/lib/nova
+
+osapi_compute_listen = {{ api_interface_address }}
+
+metadata_listen = {{ api_interface_address }}
+
+# NOTE(mgoddard): This option has been deprecated but RDO sets a different
+# default value for it in /usr/share/nova/nova-dist.conf which causes the
+# ironic virt driver to fail to load. See
+# https://bugs.launchpad.net/kolla-ansible/+bug/1701564.
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+
+allow_resize_to_same_host = False
+
+host = {{ ansible_hostname }}-{{ service_name }}
+
+compute_driver = fake.FakeDriver
+
+# Though my_ip is not used directly, lots of other variables use $my_ip
+my_ip = {{ api_interface_address }}
+
+transport_url = {{ rpc_transport_url }}
+
+[api]
+# use_forwarded_for = true
+auth_strategy=keystone
+
+[conductor]
+
+{% if service_name == "nova-compute-ironic" %}
+[ironic]
+username = {{ ironic_keystone_user }}
+password = {{ ironic_keystone_password }}
+auth_url = {{ openstack_auth.auth_url }}/v3
+auth_type = password
+project_name = service
+user_domain_name = {{ default_user_domain_name }}
+project_domain_name = {{ default_project_domain_name }}
+{% endif %}
+
+[os_vif_linux_bridge]
+use_ipv6=False
+
+[oslo_middleware]
+enable_proxy_headers_parsing = True
+
+[oslo_concurrency]
+lock_path = /var/lib/nova/tmp
+
+[glance]
+
+[compute]
+consecutive_build_service_disable_threshold=0
+
+[neutron]
+#todo too complicated
+url=http://172.17.1.12:9696
+
+service_metadata_proxy = true
+auth_url = {{ keystone_admin_url }}
+auth_type = password
+project_domain_name = {{ default_project_domain_name }}
+project_name = service
+username = {{ neutron_keystone_user }}
+password = {{ neutron_keystone_password }}
+# Begin added from CIS
+default_floating_pool=nova
+extension_sync_interval=600
+timeout=30
+user_domain_name = {{ default_user_domain_name }}
+region_name = {{ openstack_region_name }}
+
+[database]
+#todo too complicated
+connection=mysql+pymysql://nova:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova
+max_retries = -1
+db_max_retries = -1
+
+[api_database]
+#todo - hard coded for now - as comlicated
+connection=mysql+pymysql://nova_api:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_api
+
+[cache]
+backend = oslo_cache.memcache_pool
+enabled = True
+memcache_servers=172.17.1.10:11211
+#todo - too complicated
+
+[keystone_authtoken]
+auth_type = password
+project_name = service
+
+memcache_security_strategy = ENCRYPT
+
+{% if nova_compute_virt_type in ['kvm', 'qemu'] %}
+[libvirt]
+# Begin added from CBIS
+inject_password=False
+inject_key=False
+inject_partition=-2
+live_migration_uri=qemu+ssh://nova_migration@%s:22/system?keyfile=/etc/nova/migration/identity
+enabled_perf_events=
+rx_queue_size=512
+tx_queue_size=512
+volume_use_multipath = False
+# End added fro CBIS
+{% if nova_backend == "rbd" and external_ceph_cephx_enabled | bool %}
+rbd_secret_uuid = {{ rbd_secret_uuid }}
+{% endif %}
+virt_type = {{ nova_compute_virt_type }}
+{% endif %}
+{% if nova_libvirt_cpu_mode %}
+cpu_mode = {{ nova_libvirt_cpu_mode }}
+{% endif %}
+
+{% if nova_compute_virt_type == "vmware" %}
+[vmware]
+host_ip = {{ vmware_vcenter_host_ip }}
+host_username = {{ vmware_vcenter_host_username }}
+host_password = {{ vmware_vcenter_host_password }}
+cluster_name = {{ vmware_vcenter_cluster_name }}
+datastore_regex = {{ vmware_vcenter_datastore_regex }}
+insecure = {{ vmware_vcenter_insecure }}
+{% if not vmware_vcenter_insecure | bool %}
+ca_file = /etc/nova/vmware_ca
+{% endif %}
+{% endif %}
+
+[upgrade_levels]
+compute = auto
+
+[oslo_messaging_rabbit]
+ssl=False
+heartbeat_timeout_threshold=60
+
+[oslo_messaging_notifications]
+transport_url = {{ notify_transport_url }}
+driver = noop
+
+{% if nova_policy_file is defined %}
+[oslo_policy]
+policy_file = {{ nova_policy_file }}
+{% endif %}
+
+[privsep_entrypoint]
+helper_command=sudo nova-rootwrap /etc/nova/rootwrap.conf privsep-helper --config-file /etc/nova/nova.conf
+
+[glance]
+# debug = {{ nova_logging_debug }}
+api_servers=http://172.17.1.12:9292
+verify_glance_signatures=False
+
+[key_manager]
+backend=castellan.key_manager.barbican_key_manager.BarbicanKeyManager
+
+[guestfs]
+debug = {{ nova_logging_debug }}
+
+[wsgi]
+api_paste_config = /etc/nova/api-paste.ini
+
+[scheduler]
+max_attempts = 10
+discover_hosts_in_cells_interval = 60
+
+{% if enable_nova_fake | bool %}
+default_filters = RetryFilter,AvailabilityZoneFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter
+{% endif %}
+
+[placement]
+auth_type = password
+auth_url = http://172.17.1.12:5000
+username = {{ placement_keystone_user }}
+password = {{ placement_keystone_password }}
+user_domain_name = {{ default_user_domain_name }}
+project_name = service
+project_domain_name = {{ default_project_domain_name }}
+region_name = {{ openstack_region_name }}
+os_interface = internal
+valid_interfaces=internal
+
+[placement_database]
+connection=mysql+pymysql://nova_placement:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_placement?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
+
+[notifications]

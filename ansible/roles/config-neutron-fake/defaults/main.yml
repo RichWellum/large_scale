@@ -1,0 +1,78 @@
+---
+neutron_logging_debug: False
+dhcp_agents_per_network: 3
+rpc_transport_url:
+  "rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0"
+designate_ns_record: openstacklocal
+notify_transport_url:
+  "rabbit://guest:Mx9iDzzpRboRrtSAHruOmQuXb@overcloud-controller-0.internalapi.localdomain:5672/?ssl=0"
+neutron_plugin_agent: openvswitch
+# The directory to merge custom config files the kolla's config files
+node_config_config: /etc/large_scale/config
+neutron_server_port: "9696"
+ansible_processor_vcpus: 32
+openstack_service_workers: "{{ [ansible_processor_vcpus, 5]|min }}"
+openstack_service_rpc_workers: "{{ [ansible_processor_vcpus, 3]|min }}"
+enable_neutron_agent_ha: "no"
+enable_neutron_vpnaas: "no"
+enable_neutron_sriov: "no"
+enable_neutron_dvr: "no"
+enable_neutron_lbaas: "no"
+enable_neutron_fwaas: "no"
+enable_neutron_qos: "no"
+enable_neutron_bgp_dragent: "no"
+enable_neutron_provider_networks: "no"
+enable_neutron_segments: "no"
+enable_neutron_sfc: "no"
+enable_neutron_metering: "no"
+enable_neutron_infoblox_ipam_agent: "no"
+enable_designate: "no"
+neutron_ipam_driver: "internal"
+neutron_database_name: "neutron"
+neutron_type_drivers: "flat,vlan,vxlan"
+neutron_tenant_network_types: "vxlan"
+enable_hyperv: "no"
+enable_onos: "no"
+neutron_extension_drivers: "{{ extension_drivers|selectattr('enabled', 'equalto', true)|list }}"
+extension_drivers:
+  - name: "qos"
+    enabled: "{{ enable_neutron_qos | bool }}"
+  - name: "port_security"
+    enabled: true
+  - name: "dns"
+    enabled: "{{ enable_designate | bool }}"
+  - name: "sfc"
+    enabled: "{{ enable_neutron_sfc | bool }}"
+enable_opendaylight: "no"
+enable_horizon_ironic: "{{ enable_ironic | bool }}"
+enable_ironic: "no"
+enable_ironic_ipxe: "no"
+enable_ironic_pxe_uefi: "no"
+enable_iscsid: "{{ (enable_cinder | bool and enable_cinder_backend_iscsi | bool) or enable_ironic | bool }}"
+enable_neutron: "yes"
+enable_horizon_fwaas: "{{ enable_neutron_fwaas | bool }}"
+enable_horizon_neutron_lbaas: "{{ enable_neutron_lbaas | bool }}"
+enable_ironic_neutron_agent: "{{ enable_neutron | bool and enable_ironic | bool }}"
+computes_need_external_bridge: "{{ enable_neutron_dvr | bool and neutron_compute_dvr_mode == 'dvr' or enable_neutron_provider_networks | bool or enable_opendaylight | bool and neutron_plugin_agent != 'vmware_dvs' and not enable_onos | bool }}"
+enable_neutron_horizon_policy_file: "{{ enable_neutron }}"
+neutron_bridge_name: "{{ 'br-dvs' if neutron_plugin_agent == 'vmware_dvs' else 'br-ex' }}"
+neutron_agent_extensions: "{{ agent_extensions | selectattr('enabled', 'equalto', true) | list }}"
+agent_extensions:
+  - name: "qos"
+    enabled: "{{ enable_neutron_qos | bool }}"
+  - name: "sfc"
+    enabled: "{{ enable_neutron_sfc | bool }}"
+ovs_datapath: "{{ 'netdev' if enable_ovs_dpdk | bool else 'system' }}"
+enable_ovs_dpdk: "no"
+ovsdb_port: "6640"
+neutron_external_interface: "eth1"
+tunnel_interface_address: "{{ hostvars[inventory_hostname]['ansible_' + tunnel_interface]['ipv4']['address'] }}"
+tunnel_interface: "{{ network_interface }}"
+# network_interface: "eth0"
+    # FIXME: in multi node env, api_interface may be different on each
+    # node.
+network_interface: "{{ api_interface_name }}"
+neutron_openvswitch_agent_image:
+  "172.31.0.1:8787/cbis/centos-binary-neutron-openvswitch-agent:rocky-latest"
+node_config_directory: "/etc/large_scale/config"
+container_config_directory: "/var/lib/kolla/config_files"
