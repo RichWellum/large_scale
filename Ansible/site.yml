@@ -6,6 +6,8 @@
     - "*storage*"
   become: True
   gather_facts: True
+  vars:
+    num_nova_fake_per_node: 300
  
   roles:
     - config-nova-fake

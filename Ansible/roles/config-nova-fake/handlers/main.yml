@@ -3,8 +3,10 @@
   become: true
   docker_container:
     state: started
+    restart: yes
     name: "nova_compute_fake_{{ item }}"
     image: "{{ nova_compute_image_full }}"
+    network_mode: host
     privileged: True
     env:
       KOLLA_CONFIG_STRATEGY: "COPY_ALWAYS" #copy config from host to docker
@@ -13,5 +15,5 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "/lib/modules:/lib/modules:ro"
       - "/run:/run:shared"
-      - "/var/log/large_scale/:/var/log/nova/"
+      - "/var/log/large_scale/nova/:/var/log/nova/"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}

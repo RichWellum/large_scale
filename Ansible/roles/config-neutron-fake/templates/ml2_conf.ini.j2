@@ -1,6 +1,17 @@
 # ml2_conf.ini
 
 [ovs]
+bridge_mappings=physnet0:br-ex
 ovsdb_connection = tcp:127.0.0.1:6640
-integration_bridge = br-int-{{ service_name }}
-of_listen_port = {{ 6633 + service_name | int }}
+integration_bridge = br-int-{{ item }}
+of_listen_port = {{ 6634 + item | int }}
+local_ip = {{ ansible_infra_bond.ipv4.address }}
+
+[ml2_type_flat]
+flat_networks=physnet0
+
+[ml2_type_vxlan]
+vni_ranges=1:4094
+
+[agent]
+tunnel_types = vxlan

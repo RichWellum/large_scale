@@ -8,6 +8,8 @@
     mode: "0770"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
   # when: inventory_hostname in groups['compute']
+  notify:
+  - Restart fake neutron-openvswitch-agent container
 
 - name: Copying over config.json files for services
   become: true
@@ -20,6 +22,8 @@
   when:
     # - inventory_hostname in groups['compute']
     - neutron_plugin_agent == "openvswitch"
+  notify:
+  - Restart fake neutron-openvswitch-agent container
 
 - name: Copying over neutron.conf
   become: true
@@ -29,6 +33,8 @@
     mode: "0660"
   register: fake_neutron_conf
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
+  notify:
+    - Restart fake neutron-openvswitch-agent container
 
 - name: Copying over ml2_conf.ini
   become: true
@@ -38,23 +44,6 @@
     mode: "0660"
   register: fake_neutron_ml2_conf_ini
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
-
-- name: Checking neutron-openvswitch-agent container for nova fake node
-  become: true
-  docker_container:
-    state: started
-    name: "neutron_openvswitch_agent_fake_{{ item }}"
-    image: "{{ neutron_openvswitch_agent_image }}"
-    privileged: True
-    env:
-      KOLLA_CONFIG_STRATEGY: "COPY_ALWAYS" #copy config from host to docker
-    volumes:
-      - "{{ node_config_directory }}/neutron-openvswitch-agent-fake-{{ item }}/:{{ container_config_directory }}/:ro"
-      - "/etc/localtime:/etc/localtime:ro"
-      - "/lib/modules:/lib/modules:ro"
-      - "/var/log/large_scale/:/var/log/neutron/"
-  register: check_fake_neutron_openvswitch_agent
-  with_sequence: "start=1 end={{ num_nova_fake_per_node }}"
   notify:
     - Restart fake neutron-openvswitch-agent container
 
@@ -66,3 +55,31 @@
     owner: root
     group: root
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
+
+- name: Ensuring log directory has correct owner and permission
+  become: true
+  file:
+    path: "/var/log/large_scale/neutron/ovs-agent-fake-{{ item }}"
+    recurse: yes
+    state: directory
+    owner: root
+    group: root
+  with_sequence: start=1 end={{ num_nova_fake_per_node }}
+
+- name: Checking neutron-openvswitch-agent container for nova fake node
+  become: true
+  docker_container:
+    state: started
+    name: "neutron_openvswitch_agent_fake_{{ item }}"
+    image: "{{ neutron_openvswitch_agent_image }}"
+    network_mode: host
+    privileged: True
+    env:
+      KOLLA_CONFIG_STRATEGY: "COPY_ALWAYS" #copy config from host to docker
+    volumes:
+      - "{{ node_config_directory }}/neutron-openvswitch-agent-fake-{{ item }}/:{{ container_config_directory }}/:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/lib/modules:/lib/modules:ro"
+      - "/var/log/large_scale/neutron/:/var/log/neutron/"
+  register: check_fake_neutron_openvswitch_agent
+  with_sequence: "start=1 end={{ num_nova_fake_per_node }}"

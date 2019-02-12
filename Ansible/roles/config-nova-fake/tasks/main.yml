@@ -6,8 +6,6 @@
     state: "directory"
     recurse: yes
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
-  notify:
-    - Restart nova-compute-fake containers
 
 - name: Copying over config.json files for services
   become: true
@@ -28,6 +26,8 @@
     dest: "{{ node_config_directory }}/nova-compute-fake-{{ item }}/nova.conf"
     mode: "0660"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
+  notify:
+    - Restart nova-compute-fake containers
 
 - name: Ensuring config directory has correct owner and permission
   become: true
@@ -37,12 +37,31 @@
     owner: "{{ config_owner_user }}"
     group: "{{ config_owner_group }}"
   with_sequence: start=1 end={{ num_nova_fake_per_node }}
-  notify:
-    - Restart nova-compute-fake containers
 
-- name: Ensure and create log dir
+- name: Ensure log dir has correct owner and permission
   become: true
   file:
-    path: "/var/log/large_scale" #toqdo add variable
-    state: "directory"
+    path: "/var/log/large_scale/nova/compute-fake-{{ item }}"
     recurse: yes
+    state: directory
+    owner: "{{ config_owner_user }}"
+    group: "{{ config_owner_group }}"
+  with_sequence: start=1 end={{ num_nova_fake_per_node }}
+
+- name: Start nova-compute-fake containers
+  become: true
+  docker_container:
+    state: started
+    name: "nova_compute_fake_{{ item }}"
+    image: "{{ nova_compute_image_full }}"
+    network_mode: host
+    privileged: True
+    env:
+      KOLLA_CONFIG_STRATEGY: "COPY_ALWAYS" #copy config from host to docker
+    volumes:
+      - "{{ node_config_directory }}/nova-compute-fake-{{ item }}/:{{ container_config_directory }}/:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run:/run:shared"
+      - "/var/log/large_scale/nova/:/var/log/nova/"
+  with_sequence: start=1 end={{ num_nova_fake_per_node }}

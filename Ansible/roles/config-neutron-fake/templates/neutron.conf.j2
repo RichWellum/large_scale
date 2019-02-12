@@ -2,7 +2,7 @@
 [DEFAULT]
 debug = {{ neutron_logging_debug }}
 
-log_dir = /var/log/neutron
+log_dir = /var/log/neutron/ovs-agent-fake-{{ item }}
 
 # NOTE(elemoine): set use_stderr to False or the logs will also be sent to
 # stderr and collected by Docker
@@ -23,8 +23,8 @@ rpc_state_report_workers = {{ openstack_service_rpc_workers }}
 # metadata_proxy_socket = /var/lib/neutron/kolla/metadata_proxy
 
 interface_driver = openvswitch
-ovs_integration_bridge = br-int-{{ service_name }}
-host = {{ ansible_hostname }}-{{ service_name }}
+ovs_integration_bridge = br-int-{{ item }}
+host = {{ ansible_hostname }}-{{ item }}
 
 core_plugin = ml2
 service_plugins = router,qos,segments,trunk,metering

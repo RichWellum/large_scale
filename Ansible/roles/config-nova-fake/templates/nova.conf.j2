@@ -24,7 +24,7 @@ resize_confirm_window = 2
 
 debug = {{ nova_logging_debug }}
 
-log_dir = /var/log/nova
+log_dir = /var/log/nova/compute-fake-{{ item }}
 
 state_path = /var/lib/nova
 
@@ -42,7 +42,7 @@ allow_resize_to_same_host = False
 
 host = {{ ansible_hostname }}-{{ service_name }}
 
-compute_driver = fake.FakeDriver #todo: note was libvirt.LibvirtDriver in CBS environment
+compute_driver = fake.FakeDriver
 
 # Though my_ip is not used directly, lots of other variables use $my_ip
 my_ip = {{ api_interface_address }}
@@ -100,13 +100,13 @@ region_name = {{ openstack_region_name }}
 
 [database]
 #todo too complicated
-connection=mysql+pymysql://nova:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
+connection=mysql+pymysql://nova:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova
 max_retries = -1
 db_max_retries = -1
 
 [api_database]
 #todo - hard coded for now - as comlicated
-connection=mysql+pymysql://nova_api:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_api?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf
+connection=mysql+pymysql://nova_api:xFTA1jjWwVsiiqSoNzeexgSre@172.17.1.12/nova_api
 
 [cache]
 backend = oslo_cache.memcache_pool
