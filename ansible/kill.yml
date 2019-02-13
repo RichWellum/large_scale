@@ -1,0 +1,7 @@
+---
+- name: List defined containers
+  shell: docker ps -a --format '{{.Image}}' | grep fake
+  register: fake_containers
+  changed_when: False
+
+- debug: var=fake_containers
